@@ -1,6 +1,6 @@
 # Commonwealth Bank: Software Engineering Job Simulation
 
-**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Level:** Advanced (5 tasks)
+**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Certificate:** [View completion certificate](https://www.theforage.com/completion-certificates/2sNmYuurxgpFYawco/xv8eSGu7nksKNiCQj_2sNmYuurxgpFYawco_6a5b9af14bffa9009b3c045d_1793629184870_completion_certificate.pdf) · **Level:** Advanced (5 tasks)
 
 **Stack:**
 

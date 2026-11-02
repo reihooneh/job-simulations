@@ -1,6 +1,6 @@
 # Deloitte Australia: Data Analytics Job Simulation
 
-**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Level:** Intermediate (2 tasks)
+**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Certificate:** [View completion certificate](https://www.theforage.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_6a5b9af14bffa9009b3c045d_1793630401901_completion_certificate.pdf) · **Level:** Intermediate (2 tasks)
 
 **Stack:**
 

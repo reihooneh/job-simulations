@@ -1,6 +1,6 @@
 # Datacom: Automation AI Accelerator (From Co-pilot to Autonomous Agent)
 
-**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Role:** Graduate Developer
+**Platform:** [Forage](https://www.theforage.com/) · **Completed:** November 2026 · **Certificate:** [View completion certificate](https://www.theforage.com/completion-certificates/gCW7Xki5Y3vNpBmnn/Nw3MzxF2wjmki7Qor_gCW7Xki5Y3vNpBmnn_6a5b9af14bffa9009b3c045d_1793631772064_completion_certificate.pdf) · **Role:** Graduate Developer
 
 **Stack:**
 

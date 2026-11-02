@@ -26,11 +26,11 @@ Hands-on job simulations I've completed with real companies through [Forage](htt
 ```text
 job-simulations/
 ├── README.md                                   ← you are here
-└── commonwealth-bank-software-engineering/
-    ├── README.md                               ← detailed write-up
-    ├── server/                                 ← .NET backend + xUnit tests
-    ├── web/                                    ← React/Redux frontend
-    └── support-icons.patch                     ← my changes as git patches
+├── commonwealth-bank-software-engineering/
+│   ├── README.md                               ← detailed write-up
+│   ├── server/                                 ← .NET backend + xUnit tests
+│   ├── web/                                    ← React/Redux frontend
+│   └── support-icons.patch                     ← my changes as git patches
 └── deloitte-australia-data-analytics/
     ├── README.md                               ← findings and method
     ├── task-1-data-analysis/                   ← dashboard (PNG + interactive HTML) and analysis script

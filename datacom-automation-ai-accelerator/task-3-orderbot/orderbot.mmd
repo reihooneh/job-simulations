@@ -1,0 +1,12 @@
+flowchart LR
+  A["📧 Order email<br/>arrives"] --> B["🤖 OrderBot reads<br/>PDF automatically"]
+  B --> C["☁️ Checks account<br/>(Salesforce API)"]
+  C --> D["📊 Checks stock<br/>(Sheets API)"]
+  D --> F{"OrderBot<br/>decides"}
+  F -- "All OK" --> G["✅ Confirms to customer<br/>+ sends to warehouse<br/>+ updates records"]
+  F -- "Problem found" --> I["⚠️ Specific query to sales rep<br/>+ flags for human review"]
+  F -- "Low confidence" --> J["👤 Human review<br/>queue"]
+  classDef bot fill:#e7f6ec,stroke:#1b7f3b,stroke-width:2px,color:#14532d;
+  classDef human fill:#fff4e5,stroke:#b45309,color:#78350f;
+  class B,C,D,G bot;
+  class I,J human;

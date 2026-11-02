@@ -10,12 +10,13 @@
 ![Tests](https://img.shields.io/badge/tests-12%20unittest%20%2B%2020%20pytest%20passing-2EA44F)
 ![AI](https://img.shields.io/badge/AI%20co--pilot-Claude-D97757)
 
-This simulation is about working **with** AI as a developer: first as a **co-pilot** (debugging legacy code), then as an **AI architect** (writing and refining a specification that an AI agent implements). The skill being tested is judgement: giving AI the right context, treating its output as a hypothesis, and verifying everything with tests.
+This simulation is about working **with** AI as a developer: first as a **co-pilot** (debugging legacy code), then as an **AI architect** (writing and refining a specification that an AI agent implements), and finally as a **designer of autonomous agents** for business processes. The skill being tested is judgement: giving AI the right context, treating its output as a hypothesis, and verifying everything with tests.
 
 | Task | What I delivered | Folder |
 | --- | --- | --- |
 | 1. AI-powered debugging and refactoring | Diagnosed a failing nightly data job, reproduced **6 bugs** with failing tests, and refactored it to be robust and much faster | [`task-1-debugging/`](task-1-debugging/) |
 | 2. Spec-driven development | Turned "we need a way to give kudos" into an approved spec with **moderation added in review**, then a working, tested Kudos feature | [`task-2-kudos/`](task-2-kudos/) |
+| 3. Designing an autonomous agent | Mapped a manual order process and designed **OrderBot**, an AI agent with human-in-the-loop safeguards, presented in a 3-slide management deck | [`task-3-orderbot/`](task-3-orderbot/) |
 
 ---
 
@@ -91,10 +92,29 @@ pytest -v              # 20 passed
 
 ---
 
+## Task 3: OrderBot (designing an autonomous agent)
+
+**Brief:** the Operations team handles every hardware order by hand: read the PDF, check Salesforce, check a Google Sheet, then write two emails, or email sales back when there's a problem.
+
+**My design:** **OrderBot** reads the order email and PDF, checks the account and stock through APIs, and then decides:
+
+- **confirm:** emails the customer and warehouse and updates the records
+- **query:** sends sales a *specific* problem
+- **escalate:** sends low-confidence orders to a human
+
+It logs every outcome so it can learn patterns over time. I recommended a **4-week read-only Proof of Concept** before switching on any actions.
+
+![OrderBot solution slide](task-3-orderbot/slides/slide-2-solution.png)
+
+📄 [Full 3-slide presentation (PDF)](task-3-orderbot/OrderBot_Proposal.pdf) · [Agent design](task-3-orderbot/README.md)
+
+---
+
 ## What I learned
 
 - **Context beats commands.** Prompts with the code, logs and a clear goal got precise answers.
 - **AI output is a hypothesis.** I verified the AI's diagnosis, measured its refactor (and rejected the first, slower version), and caught the missing moderation in its spec.
+- **Agents need guardrails.** Autonomy works best with confidence thresholds, a human review queue, audit logs and a read-only trial first.
 - **The highest-value work happens before the code.** Fixing a requirement costs one line in a spec, but much more once it's in production.
 
 <sub>Brief, legacy script and data were provided by Datacom for the Forage simulation. The AI co-pilot used was Claude (Anthropic).</sub>

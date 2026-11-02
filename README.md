@@ -9,6 +9,7 @@ Hands-on job simulations I've completed with real companies through [Forage](htt
 | Company | Program | What I built | Tech | Completed |
 | --- | --- | --- | --- | --- |
 | 🏦 **Commonwealth Bank** | [Software Engineering](commonwealth-bank-software-engineering/) | End-to-end **goal icons** feature for the CommBank Goal Tracker: C# model change, React/Redux emoji picker, Axios API integration, xUnit tests and a pull request | C#, .NET 6, MongoDB, React, Redux, TypeScript, xUnit, Git | Nov 2026 |
+| 📊 **Deloitte Australia** | [Data Analytics](deloitte-australia-data-analytics/) | **Machine down time dashboard** for a 4-factory manufacturer (found the faulty LaserWelder behind 47% of down time) and a **pay equality classification** for a forensic investigation | Data analysis, dashboards, Excel formulas, JavaScript | Nov 2026 |
 
 *More simulations coming soon.*
 
@@ -17,6 +18,7 @@ Hands-on job simulations I've completed with real companies through [Forage](htt
 - **Backend:** C#, ASP.NET Core Web API, MongoDB, REST design
 - **Frontend:** React, Redux Toolkit, TypeScript, styled-components
 - **Testing:** xUnit unit tests, Postman API testing
+- **Data analytics:** JSON telemetry analysis, dashboards with linked filters, Excel formulas and conditional formatting
 - **Workflow:** Git branching, commits, patches and pull requests
 
 ## Repository layout
@@ -29,6 +31,10 @@ job-simulations/
     ├── server/                                 ← .NET backend + xUnit tests
     ├── web/                                    ← React/Redux frontend
     └── support-icons.patch                     ← my changes as git patches
+└── deloitte-australia-data-analytics/
+    ├── README.md                               ← findings and method
+    ├── task-1-data-analysis/                   ← dashboard (PNG + interactive HTML) and analysis script
+    └── task-2-forensic-technology/             ← classified equality table (.xlsx)
 ```
 
 <sub>The starter code in each simulation belongs to the company and Forage. My contributions are described in each folder's README.</sub>

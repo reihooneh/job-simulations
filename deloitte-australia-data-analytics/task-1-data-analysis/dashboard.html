@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Daikibo Telemetry Dashboard</title>
+<style>
+:root{--ink:#333;--muted:#666;--grid:#e6e6e6;--bar:#4e79a7;--dim:#c5d3e2;--sel:#4e79a7}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;font-family:"Segoe UI",Arial,Helvetica,sans-serif;color:var(--ink)}
+.wrap{width:1400px;padding:22px 28px}
+h1{font-size:22px;margin:0 0 4px;font-weight:600}
+.sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.sheet{border:1px solid #d9d9d9;padding:14px 16px 10px}
+.sheet h2{font-size:15px;margin:0 0 10px;font-weight:600}
+.row{display:grid;grid-template-columns:190px 1fr;align-items:center;height:42px;cursor:pointer}
+.lab{font-size:13px;padding-right:10px;text-align:right;white-space:nowrap}
+.track{position:relative;height:100%;border-left:1px solid #999;
+ background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px);background-size:20% 100%}
+.bar{position:absolute;top:9px;height:24px;background:var(--bar)}
+.val{position:absolute;top:12px;font-size:12px;color:var(--ink)}
+.dimmed .bar{background:var(--dim)}
+.axis{display:grid;grid-template-columns:190px 1fr;font-size:11px;color:var(--muted);margin-top:4px}
+.ticks{display:flex;justify-content:space-between}
+.atitle{text-align:center;font-size:12px;color:var(--muted);margin-top:4px;grid-column:2}
+.filter{font-size:12px;color:var(--muted);margin:-4px 0 8px}
+.kpis{display:flex;gap:14px;margin:0 0 16px}
+.kpi{border:1px solid #d9d9d9;padding:8px 14px;font-size:12px;color:var(--muted)}
+.kpi b{display:block;font-size:20px;color:var(--ink)}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+</style></head><body><div class="wrap">
+<h1>Daikibo Industrials: Machine Down Time Dashboard</h1>
+<div class="sub">Telemetry from 4 factories × 9 machine types, one message every 10 minutes · Unhealthy = 10 minutes of potential down time per unhealthy status · Click a factory to filter</div>
+<div class="kpis">
+ <div class="kpi"><b>160,704</b>telemetry messages</div>
+ <div class="kpi"><b>36</b>machines (4 × 9)</div>
+ <div class="kpi"><b>103</b>unhealthy statuses</div>
+ <div class="kpi"><b>1,030 min</b>total down time</div>
+ <div class="kpi"><b id="selk">Osaka (Seiko)</b>most down time</div>
+</div>
+<div class="grid">
+ <div class="sheet"><h2>Down Time per Factory</h2><div id="f"></div></div>
+ <div class="sheet"><h2>Down Time per Device Type</h2><div class="filter" id="flab"></div><div id="d"></div></div>
+</div>
+<div class="note">Sum of Unhealthy (minutes). Data: daikibo-telemetry-data.json. Prepared by Reihaneh Rahmati for the Deloitte Australia Data Analytics job simulation.</div>
+</div>
+<script>
+const F={"Daikibo Factory Seiko (Osaka)":480,"Daikibo Shenzhen":420,"Daikibo Factory Meiyo (Tokyo)":110,"Daikibo Berlin":20};
+const T={"Daikibo Factory Meiyo (Tokyo)":{LaserCutter:40,HeavyDutyDrill:70},"Daikibo Factory Seiko (Osaka)":{LaserWelder:480},"Daikibo Berlin":{Furnace:20},"Daikibo Shenzhen":{LaserCutter:390,SpotWelder:10,CNC:10,ConveyorBelt:10}};
+const TYPES=["CNC","LaserCutter","HeavyDutyDrill","SpotWelder","LaserWelder","MetalPress","Furnace","ConveyorBelt","AirWrench"];
+let sel=new URLSearchParams(location.search).get('f')||"Daikibo Factory Seiko (Osaka)";if(sel==='all')sel=null;
+function chart(el,data,max,onclick,selected){el.innerHTML='';const keys=Object.keys(data);
+ for(const k of keys){const r=document.createElement('div');r.className='row'+(selected&&k!==selected?' dimmed':'');
+  const w=data[k]/max*100;r.innerHTML=`<div class="lab">${k}</div><div class="track"><div class="bar" style="width:${w}%"></div><div class="val" style="left:calc(${w}% + 6px)">${data[k]}</div></div>`;
+  if(onclick)r.onclick=()=>onclick(k);el.appendChild(r);}
+ const ax=document.createElement('div');ax.className='axis';const t=[0,1,2,3,4,5].map(i=>Math.round(max*i/5));
+ ax.innerHTML=`<div></div><div class="ticks">${t.map(x=>`<span>${x}</span>`).join('')}</div><div class="atitle">Unhealthy (minutes of down time)</div>`;el.appendChild(ax);}
+function render(){
+ chart(document.getElementById('f'),F,500,k=>{sel=sel===k?null:k;render()},sel);
+ const d={};for(const t of TYPES){d[t]=0;for(const f in T){if(!sel||f===sel)d[t]+=(T[f][t]||0)}}
+ const sorted=Object.fromEntries(Object.entries(d).sort((a,b)=>b[1]-a[1]));
+ document.getElementById('flab').textContent='Filter: '+(sel?sel:'All factories');
+ chart(document.getElementById('d'),sorted,500,null,null);}
+render();
+</script></body></html>

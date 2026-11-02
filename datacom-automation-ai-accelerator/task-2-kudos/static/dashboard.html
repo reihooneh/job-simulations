@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kudos · Employee Portal</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>🎉 Kudos</h1>
+    <label class="switcher">Signed in as
+      <select id="user-switch" aria-label="Switch demo user"></select>
+    </label>
+  </header>
+
+  <main class="layout">
+    <section class="card" aria-labelledby="give-title">
+      <h2 id="give-title">Give kudos</h2>
+      <form id="kudos-form" novalidate>
+        <label for="recipient">Colleague</label>
+        <select id="recipient" required>
+          <option value="">Choose a colleague…</option>
+        </select>
+
+        <label for="message">Message</label>
+        <textarea id="message" maxlength="280" rows="4" required
+          placeholder="Thanks for…" aria-describedby="counter"></textarea>
+        <div class="row">
+          <span id="counter" aria-live="polite">0 / 280</span>
+          <button type="submit">Send kudos</button>
+        </div>
+        <p id="form-status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="feed-title">
+      <h2 id="feed-title">Recent kudos</h2>
+      <ul id="feed" class="feed"></ul>
+    </section>
+
+    <section class="card admin" id="admin-panel" hidden aria-labelledby="admin-title">
+      <h2 id="admin-title">Moderation <span class="badge">Admin</span></h2>
+      <p class="hint">Hidden kudos are removed from the feed but kept for audit. Delete is permanent.</p>
+      <ul id="admin-list" class="feed"></ul>
+    </section>
+  </main>
+
+  <template id="kudos-item">
+    <li class="item">
+      <div class="who"><strong class="from"></strong> → <strong class="to"></strong>
+        <time class="when"></time></div>
+      <p class="msg"></p>
+      <div class="mod"></div>
+    </li>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

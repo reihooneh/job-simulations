@@ -10,6 +10,7 @@ Hands-on job simulations I've completed with real companies through [Forage](htt
 | --- | --- | --- | --- | --- |
 | 🏦 **Commonwealth Bank** | [Software Engineering](commonwealth-bank-software-engineering/) | End-to-end **goal icons** feature for the CommBank Goal Tracker: C# model change, React/Redux emoji picker, Axios API integration, xUnit tests and a pull request | C#, .NET 6, MongoDB, React, Redux, TypeScript, xUnit, Git | Nov 2026 |
 | 📊 **Deloitte Australia** | [Data Analytics](deloitte-australia-data-analytics/) | **Machine down time dashboard** for a 4-factory manufacturer (found the faulty LaserWelder behind 47% of down time) and a **pay equality classification** for a forensic investigation | Data analysis, dashboards, Excel formulas, JavaScript | Nov 2026 |
+| 🤖 **Datacom** | [Automation AI Accelerator](datacom-automation-ai-accelerator/) | **AI-assisted debugging** of a failing nightly data job (6 bugs reproduced with tests, metrics ~35× faster) and a **spec-driven Kudos feature** with moderation, built from an approved specification | Python, Flask, SQLite, unittest, pytest, AI co-pilot | Nov 2026 |
 
 *More simulations coming soon.*
 
@@ -19,6 +20,7 @@ Hands-on job simulations I've completed with real companies through [Forage](htt
 - **Frontend:** React, Redux Toolkit, TypeScript, styled-components
 - **Testing:** xUnit unit tests, Postman API testing
 - **Data analytics:** JSON telemetry analysis, dashboards with linked filters, Excel formulas and conditional formatting
+- **AI-assisted development:** prompt engineering for debugging, spec-driven development, verifying AI output with tests
 - **Workflow:** Git branching, commits, patches and pull requests
 
 ## Repository layout
@@ -31,10 +33,14 @@ job-simulations/
 │   ├── server/                                 ← .NET backend + xUnit tests
 │   ├── web/                                    ← React/Redux frontend
 │   └── support-icons.patch                     ← my changes as git patches
-└── deloitte-australia-data-analytics/
-    ├── README.md                               ← findings and method
-    ├── task-1-data-analysis/                   ← dashboard (PNG + interactive HTML) and analysis script
-    └── task-2-forensic-technology/             ← classified equality table (.xlsx)
+├── deloitte-australia-data-analytics/
+│   ├── README.md                               ← findings and method
+│   ├── task-1-data-analysis/                   ← dashboard (PNG + interactive HTML) and analysis script
+│   └── task-2-forensic-technology/             ← classified equality table (.xlsx)
+└── datacom-automation-ai-accelerator/
+    ├── README.md                               ← overview of both tasks
+    ├── task-1-debugging/                       ← legacy vs refactored script, tests, debug log
+    └── task-2-kudos/                           ← SPECIFICATION.md + Flask app + 20 tests
 ```
 
 <sub>The starter code in each simulation belongs to the company and Forage. My contributions are described in each folder's README.</sub>

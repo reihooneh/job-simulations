@@ -1,0 +1,252 @@
+From bfe41fd187fafd3000f44003331f99dd63fa45a6 Mon Sep 17 00:00:00 2001
+From: Reihaneh Rahmati <reihaneh26686@gmail.com>
+Date: Tue, 3 Nov 2026 01:08:54 +1100
+Subject: [PATCH] Support icons
+
+- Add optional Icon field to the Goal model
+- Cover the GetForUser route in GoalControllerTests
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019AXTMoAhWma1gvoApmDd6D
+---
+ CommBank-Server/Models/Goal.cs        |  2 ++
+ CommBank.Tests/GoalControllerTests.cs | 30 ++++++++++++++++++++++++---
+ 2 files changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/CommBank-Server/Models/Goal.cs b/CommBank-Server/Models/Goal.cs
+index 77ff1ad..218f390 100644
+--- a/CommBank-Server/Models/Goal.cs
++++ b/CommBank-Server/Models/Goal.cs
+@@ -25,6 +25,8 @@ public class Goal
+     [BsonRepresentation(BsonType.ObjectId)]
+     public List<string>? TagIds { get; set; }
+ 
++    public string? Icon { get; set; }
++
+     [BsonRepresentation(BsonType.ObjectId)]
+     public string? UserId { get; set; }
+ }
+\ No newline at end of file
+diff --git a/CommBank.Tests/GoalControllerTests.cs b/CommBank.Tests/GoalControllerTests.cs
+index 8380181..c13d83a 100644
+--- a/CommBank.Tests/GoalControllerTests.cs
++++ b/CommBank.Tests/GoalControllerTests.cs
+@@ -32,7 +32,7 @@ public class GoalControllerTests
+ 
+         // Assert
+         var index = 0;
+-        foreach (Goal goal in result)
++        foreach (Goal goal in result!)
+         {
+             Assert.IsAssignableFrom<Goal>(goal);
+             Assert.Equal(goals[index].Id, goal.Id);
+@@ -66,9 +66,33 @@ public class GoalControllerTests
+     public async void GetForUser()
+     {
+         // Arrange
+-        
++        var goals = collections.GetGoals();
++        var users = collections.GetUsers();
++        var userId = users[0].Id!;
++        foreach (Goal g in goals)
++        {
++            g.UserId = userId;
++        }
++        IGoalsService goalsService = new FakeGoalsService(goals, goals[0]);
++        IUsersService usersService = new FakeUsersService(users, users[0]);
++        GoalController controller = new(goalsService, usersService);
++
+         // Act
+-        
++        var httpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext();
++        controller.ControllerContext.HttpContext = httpContext;
++        var result = await controller.GetForUser(userId);
++
+         // Assert
++        Assert.NotNull(result);
++        Assert.Equal(goals.Count, result!.Count);
++
++        var index = 0;
++        foreach (Goal goal in result!)
++        {
++            Assert.IsAssignableFrom<Goal>(goal);
++            Assert.Equal(userId, goal.UserId);
++            Assert.Equal(goals[index].Id, goal.Id);
++            index++;
++        }
+     }
+ }
+\ No newline at end of file
+-- 
+2.43.0
+
+From 6921ccba6451d08c8a1c19ccb3e94d93ffb9b3ac Mon Sep 17 00:00:00 2001
+From: Reihaneh Rahmati <reihaneh26686@gmail.com>
+Date: Tue, 3 Nov 2026 01:08:54 +1100
+Subject: [PATCH] Support icons
+
+- Add icon to the Goal type and show it on goal cards
+- Add emoji picker, Add icon button and goal icon to GoalManager
+- Save picked icons to Redux and the API
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019AXTMoAhWma1gvoApmDd6D
+---
+ src/api/types.ts                            |  1 +
+ src/ui/features/goalmanager/GoalManager.tsx | 67 ++++++++++++++++++++-
+ src/ui/pages/Main/goals/GoalCard.tsx        |  5 ++
+ 3 files changed, 72 insertions(+), 1 deletion(-)
+
+diff --git a/src/api/types.ts b/src/api/types.ts
+index f75edad..8cbabc0 100644
+--- a/src/api/types.ts
++++ b/src/api/types.ts
+@@ -27,6 +27,7 @@ export interface Goal {
+   accountId: string
+   transactionIds: string[]
+   tagIds: string[]
++  icon: string | null
+ }
+ 
+ export interface Tag {
+diff --git a/src/ui/features/goalmanager/GoalManager.tsx b/src/ui/features/goalmanager/GoalManager.tsx
+index 0779dda..fd3459a 100644
+--- a/src/ui/features/goalmanager/GoalManager.tsx
++++ b/src/ui/features/goalmanager/GoalManager.tsx
+@@ -3,6 +3,7 @@ import { faDollarSign, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
+ import 'date-fns'
++import { BaseEmoji } from 'emoji-mart'
+ import React, { useEffect, useState } from 'react'
+ import styled from 'styled-components'
+ import { updateGoal as updateGoalApi } from '../../../api/lib'
+@@ -10,7 +11,10 @@ import { Goal } from '../../../api/types'
+ import { selectGoalsMap, updateGoal as updateGoalRedux } from '../../../store/goalsSlice'
+ import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+ import DatePicker from '../../components/DatePicker'
++import EmojiPicker from '../../components/EmojiPicker'
+ import { Theme } from '../../components/Theme'
++import AddIconButton from './AddIconButton'
++import GoalIcon from './GoalIcon'
+ 
+ type Props = { goal: Goal }
+ export function GoalManager(props: Props) {
+@@ -21,16 +25,20 @@ export function GoalManager(props: Props) {
+   const [name, setName] = useState<string | null>(null)
+   const [targetDate, setTargetDate] = useState<Date | null>(null)
+   const [targetAmount, setTargetAmount] = useState<number | null>(null)
++  const [icon, setIcon] = useState<string | null>(null)
++  const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState(false)
+ 
+   useEffect(() => {
+     setName(props.goal.name)
+     setTargetDate(props.goal.targetDate)
+     setTargetAmount(props.goal.targetAmount)
++    setIcon(props.goal.icon)
+   }, [
+     props.goal.id,
+     props.goal.name,
+     props.goal.targetDate,
+     props.goal.targetAmount,
++    props.goal.icon,
+   ])
+ 
+   useEffect(() => {
+@@ -75,8 +83,49 @@ export function GoalManager(props: Props) {
+     }
+   }
+ 
++  const hasIcon = () => icon != null
++
++  const addIconOnClick = (event: React.MouseEvent) => {
++    event.stopPropagation()
++    setEmojiPickerIsOpen(true)
++  }
++
++  const pickEmojiOnClick = (emoji: BaseEmoji, event: React.MouseEvent) => {
++    event.stopPropagation()
++
++    setIcon(emoji.native)
++    setEmojiPickerIsOpen(false)
++
++    const updatedGoal: Goal = {
++      ...props.goal,
++      icon: emoji.native ?? props.goal.icon,
++      name: name ?? props.goal.name,
++      targetDate: targetDate ?? props.goal.targetDate,
++      targetAmount: targetAmount ?? props.goal.targetAmount,
++    }
++
++    dispatch(updateGoalRedux(updatedGoal))
++    updateGoalApi(props.goal.id, updatedGoal)
++  }
++
+   return (
+-    <GoalManagerContainer>
++    <GoalManagerContainer onClick={() => setEmojiPickerIsOpen(false)}>
++      <AddIconButtonContainer shouldShow={!hasIcon()}>
++        <AddIconButton hasIcon={hasIcon()} onClick={addIconOnClick} />
++      </AddIconButtonContainer>
++
++      <GoalIconContainer shouldShow={hasIcon()}>
++        <GoalIcon icon={goal.icon} onClick={addIconOnClick} />
++      </GoalIconContainer>
++
++      <EmojiPickerContainer
++        isOpen={emojiPickerIsOpen}
++        hasIcon={hasIcon()}
++        onClick={(event) => event.stopPropagation()}
++      >
++        <EmojiPicker onClick={pickEmojiOnClick} />
++      </EmojiPickerContainer>
++
+       <NameInput value={name ?? ''} onChange={updateNameOnChange} />
+ 
+       <Group>
+@@ -122,6 +171,22 @@ const Field = (props: FieldProps) => (
+   </FieldContainer>
+ )
+ 
++const AddIconButtonContainer = styled.div<AddIconButtonContainerProps>`
++  display: ${(props) => (props.shouldShow ? 'flex' : 'none')};
++`
++
++const GoalIconContainer = styled.div<GoalIconContainerProps>`
++  display: ${(props) => (props.shouldShow ? 'flex' : 'none')};
++`
++
++const EmojiPickerContainer = styled.div<EmojiPickerContainerProps>`
++  display: ${(props) => (props.isOpen ? 'flex' : 'none')};
++  position: absolute;
++  top: ${(props) => (props.hasIcon ? '10rem' : '2rem')};
++  left: 0;
++  z-index: 10;
++`
++
+ const GoalManagerContainer = styled.div`
+   display: flex;
+   flex-direction: column;
+diff --git a/src/ui/pages/Main/goals/GoalCard.tsx b/src/ui/pages/Main/goals/GoalCard.tsx
+index e8f6d0a..c56e378 100644
+--- a/src/ui/pages/Main/goals/GoalCard.tsx
++++ b/src/ui/pages/Main/goals/GoalCard.tsx
+@@ -29,6 +29,7 @@ export default function GoalCard(props: Props) {
+     <Container key={goal.id} onClick={onClick}>
+       <TargetAmount>${goal.targetAmount}</TargetAmount>
+       <TargetDate>{asLocaleDateString(goal.targetDate)}</TargetDate>
++      <Icon>{goal.icon}</Icon>
+     </Container>
+   )
+ }
+@@ -54,3 +55,7 @@ const TargetDate = styled.h4`
+   color: rgba(174, 174, 174, 1);
+   font-size: 1rem;
+ `
++
++const Icon = styled.h1`
++  font-size: 5.5rem;
++`
+-- 
+2.43.0
+
